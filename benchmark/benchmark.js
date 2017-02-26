@@ -4,7 +4,7 @@ import { range } from "lodash";
 
 import { render } from "../src";
 import { time } from "./_util";
-
+import PrerenderedComponent from "./prerendered-component";
 
 // Make sure React is in production mode.
 process.env.NODE_ENV = "production";
@@ -148,6 +148,22 @@ Promise.resolve()
               depth={DEPTH}
               leafText="hi there! © <"
               cacheMe={CACHE_COMPONENT}
+            />
+          ).toPromise()
+        )
+      ),
+      baseTime
+    )
+  )
+  .then(() =>
+    time(
+      "rapscallion, pre-rendered",
+      () => Promise.all(
+        range(CONCURRENCY).map(() =>
+          render(
+            <PrerenderedComponent
+              depth={DEPTH}
+              leafText="hi there! © <"
             />
           ).toPromise()
         )
