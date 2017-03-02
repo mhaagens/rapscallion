@@ -1,3 +1,5 @@
+const async = require('asyncawait/async');
+const await = require('asyncawait/await');
 const { getChildContext, getContext } = require("./context");
 const { syncSetState } = require("./state");
 const { htmlStringEscape } = require("./util");
@@ -72,15 +74,32 @@ function evalComponent (seq, node, context) {
 
   // eslint-disable-next-line new-cap
   const instance = new node.type(node.props, componentContext);
-
+  let res = null;
+  let promise = null;
   if (typeof instance.componentWillMount === "function") {
     instance.setState = syncSetState;
-    instance.componentWillMount();
+    res = instance.componentWillMount();
   }
 
-  const childContext = getChildContext(node.type, instance, context);
+  if (res && res.then) {
+    promise = res
+  }
 
-  traverse(seq, instance.render(), childContext);
+  let done = false;
+  if(promise){
+    console.log('RUNNING PROMISE')
+    promise.then(() => {done = true;});
+  } else {
+    console.log('NOT RUNNING PROMISE')
+      done = true;
+  }
+  console.log('isdone', done)
+  require('deasync').loopWhile(function(){return !done;});
+  if (done) {
+    const childContext = getChildContext(node.type, instance, context);
+    traverse(seq, instance.render(), childContext);
+  }
+
 }
 
 /**
