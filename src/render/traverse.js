@@ -1,5 +1,3 @@
-const async = require('asyncawait/async');
-const await = require('asyncawait/await');
 const { getChildContext, getContext } = require("./context");
 const { syncSetState } = require("./state");
 const { htmlStringEscape } = require("./util");
